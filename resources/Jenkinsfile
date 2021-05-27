@@ -1,0 +1,69 @@
+@Library("Koala-osmagic-pipeline-compass") _
+
+pipeline {
+
+    agent any
+
+    parameters {
+        choice(name: 'Koala-osmaigc-all-barnch', choices: ['dev', 'test', 'master'], description: 'Koala-osmagic-all分支')
+
+        string(name: 'ServerIp', defaultValue: '10.10.8.5', description: '服务器地址')
+        password(name: 'ServerPs', defaultValue: '12345', description: ' 服务器root账号密码')
+
+        booleanParam(name: '000-build-all-application', defaultValue: false, description: '构建全部应用')
+        booleanParam(name: 'A01-Koala-xxxxxxxx-all-eureka', defaultValue: false, description: '注册中心')
+        booleanParam(name: 'A02-Koala-xxxxxxxx-all-gateway', defaultValue: false, description: '网关服务')
+        booleanParam(name: 'A03-Koala-xxxxxxxx-all-hyperion', defaultValue: false, description: '特征库服务')
+        booleanParam(name: 'A04-Koala-xxxxxxxx-all-titan', defaultValue: false, description: '流式服务')
+        booleanParam(name: 'A05-Koala-xxxxxxxx-all-oceanus', defaultValue: false, description: '数据处理服务')
+        booleanParam(name: 'A06-Koala-xxxxxxxx-all-iapetus', defaultValue: false, description: '流媒体服务')
+        booleanParam(name: 'A07-Koala-xxxxxxxx-all-themis', defaultValue: false, description: 'GPU采集服务')
+        booleanParam(name: 'A08-Koala-xxxxxxxx-all-theia', defaultValue: false, description: '公共服务')
+        booleanParam(name: 'A21-Koala-xxxxxxxx-all-bower', defaultValue: false, description: '账号管理')
+        booleanParam(name: 'A22-Koala-xxxxxxxx-all-power', defaultValue: false, description: 'AI演示平台')
+        booleanParam(name: 'A23-Koala-xxxxxxxx-all-tower', defaultValue: false, description: 'AI学习平台')
+        booleanParam(name: 'B22-Koala-xxxxxxxx-learn-power-web', defaultValue: false, description: 'AI演示平台')
+        booleanParam(name: 'B23-Koala-xxxxxxxx-learn-tower-web', defaultValue: false, description: 'AI学习平台')
+    }
+
+    environment {
+        Sauce_Access = credentials('Koala')
+        Koala_osmagic_ding_address = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx"
+        Koala_osmagic_all_address = "http://${Sauce_Access}@192.168.2.xxx:8888/xxxxxxxx-all/Java/Koala-osmagic-all.git"
+        Koala_osmagic_learn_power_web_address = "http://${Sauce_Access}@192.168.2.xxx:8888/xxxxxxxx-all/Web/Koala-osmagic-learn-power-web.git"
+        Koala_osmagic_learn_tower_web_address = "http://${Sauce_Access}@192.168.2.xxx:8888/xxxxxxxx-all/Web/Koala-osmagic-learn-tower-web.git"
+    }
+
+    stages {
+        stage("Verify") {
+            steps {
+                /*
+                * 对共享库vars中的调用, 只能放在script代码块中
+                */
+                script {
+                    String item = "Verify"
+                    println("script ... $item")
+
+                    // 调用成功, 也可以直接使用 wheel("item") 和 wheel "item" 两种方式调用
+                    wheel.call("item")
+
+                    // libraryResource读取resources目录下文件内容 成功
+                    def ctx = libraryResource "algo.json"
+                    println("ctx: $ctx")
+
+                    // 调用通过
+                    //steering.car "nice"
+
+                    // 调用通过
+                    //steering.bus "nice"
+
+                    // 并行尝试
+                    steering.bike "nice"
+                }
+
+                echo "Verify finish ... "
+            }
+        }
+    }
+
+}
