@@ -27,6 +27,7 @@ pipeline {
     }
 
     environment {
+        labelItem = "default"
         Sauce_Access = credentials('Koala')
         Koala_osmagic_ding_address = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx"
         Koala_osmagic_all_address = "http://${Sauce_Access}@192.168.2.xxx:8888/xxxxxxxx-all/Java/Koala-osmagic-all.git"
@@ -57,8 +58,10 @@ pipeline {
                     // 调用通过
                     //steering.bus "nice"
 
-                    // 并行尝试
-                    steering.bike "nice"
+                    // 并行尝试, 调用通过
+                    //steering.bike "nice"
+
+                    engine "Java", "Web", "Cxx"
                 }
 
                 echo "Verify finish ... "
