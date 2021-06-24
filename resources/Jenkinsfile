@@ -1,6 +1,6 @@
 @Library("Koala-osmagic-pipeline-compass") _
 
-import com.osmagic.pipeline.compass.CommUtils
+import com.osmagic.pipeline.compass.utils.CommUtils
 
 pipeline {
 

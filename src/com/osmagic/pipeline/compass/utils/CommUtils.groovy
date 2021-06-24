@@ -1,4 +1,4 @@
-package com.osmagic.pipeline.compass
+package com.osmagic.pipeline.compass.utils
 
 class CommUtils {
 
