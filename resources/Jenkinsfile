@@ -84,14 +84,14 @@ pipeline {
             parallel {
                 // Java和Web
                 stage("Web") {
+                    when {
+                        expression { return false }
+                        // expression { return CommUtils.generic("Java", "Web", "C") }
+                    }
                     agent {
                         //docker pull node:latest
                         docker { image 'node:latest' }
                     }
-                    when {
-                        expression { return CommUtils.generic("Java", "Web", "C") }
-                    }
-
                     steps {
                         script {
                             sh "node -v"
@@ -123,12 +123,13 @@ pipeline {
 
                 // Java和Web
                 stage("JavaWeb") {
+                    when {
+                        expression { return false }
+                        // expression { return CommUtils.generic("Java", "Web", "C") }
+                    }
                     agent {
                         // docker pull maven:3.8.1-jdk-8
                         docker { image 'maven:3.8.1-jdk-8' }
-                    }
-                    when {
-                        expression { return CommUtils.generic("Java", "Web", "C") }
                     }
                     steps {
                         script {
@@ -143,8 +144,21 @@ pipeline {
                     when {
                         expression { return CommUtils.algorithm("Algo", "B", "C") }
                     }
+                    agent {
+                        // docker pull maven:3.8.1-jdk-8
+                        docker {
+                            label 'algo'
+                            image '192.168.2.100:5000/osmagic/aisdk:v7.4'
+                            args  '--runtime=nvidia --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --privileged=true --user root -e NVIDIA_VISIBLE_DEVICES=all -e CUDA_HOME=1 -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v /etc/timezone:/etc/timezone '
+                        }
+                    }
                     steps {
                         script {
+                            sh "git --version"
+                            sh "pwd && ls -l"
+                            sh "nvidia-smi"
+                            //sh "git clone http://192.168.2.100:8888/osmagic-all/Cpp/city_manager/workspace.git"
+                            sh "cd workspace && ls -l && docker -v && docker images"
                             println("[INFO ] Algorithm finish .... ")
                         }
                     }
