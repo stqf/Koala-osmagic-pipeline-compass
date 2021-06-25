@@ -1,7 +1,7 @@
 def clone(String wsItem, String branch, String url) {
-    def saItem = env.get("Sauce_Access")
+    //def saItem = env.get("Sauce_Access")
     def branchItem = branch == null ? "master" : branch
-    def reallyUrl = url.replaceAll("http://", "http://$saItem@")
+    def reallyUrl = url.replaceAll("http://", "http://${env.Sauce_Access}@")
     sh """
         if [ -d "$wsItem" ]; then
             cd $wsItem && git reset --hard HEAD && git pull 
