@@ -13,7 +13,7 @@ def clone(String wsItem, String projectItem, String branch, String url) {
     sh """
         cd $wsItem
         if [ -d "$projectItem" ]; then
-            cd $projectItem && git reset --hard HEAD && git pull 
+            cd $projectItem && git reset --hard HEAD && git checkout $branchItem && git pull 
             echo "[INFO ] 更新代码完成 ..."
         else
             git clone $reallyUrl -b $branchItem $projectItem
