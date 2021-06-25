@@ -149,16 +149,46 @@ pipeline {
                         docker {
                             label 'algo'
                             image '192.168.2.100:5000/osmagic/aisdk:v7.4'
-                            args  '--runtime=nvidia --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --privileged=true --user root -e NVIDIA_VISIBLE_DEVICES=all -e CUDA_HOME=1 -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v /etc/timezone:/etc/timezone '
+                            args '--runtime=nvidia --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --privileged=true --user root -e NVIDIA_VISIBLE_DEVICES=all -e CUDA_HOME=1 -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v /etc/timezone:/etc/timezone '
                         }
                     }
                     steps {
                         script {
-                            sh "git --version"
-                            sh "pwd && ls -l"
-                            sh "nvidia-smi"
-                            //sh "git clone http://192.168.2.100:8888/osmagic-all/Cpp/city_manager/workspace.git"
-                            sh "cd workspace && ls -l && docker -v && docker images"
+                            def wsItem = "Koala-osmagic-algo"
+                            sh """
+                                if [ ! -d "$wsItem" ]; then
+                                    mkdir $wsItem
+                                fi
+                            """
+                            sh "git --version && pwd && ls -l && nvidia-smi && cd $wsItem && ls -l && docker images"
+                            down.clone wsItem, "workspace", params.get("Koala-osmaigc-all-barnch"), "http://192.168.2.100:8888/osmagic-all/Cpp/city_manager/workspace.git"
+                            sh """
+                                pwd && ls -l && cd $wsItem && ls -l
+                                cd workspace && 
+                                sed -e "s/http:\\/\\//http:\\/\\/${env.Sauce_Access}@/g" download.sh > download.sh.1 && 
+                                cat download.sh.1 &&
+                                sh download.sh.1 &&
+                                pwd && ls -l &&
+                                cd ../AlgoLib && mkdir -pv build && cd build && cmake .. && make -j8 && make install &&
+                                cd ../../workspace &&
+                                bash build_frame.sh &&
+                                bash build_static.sh &&
+                                bash build_stream.sh &&
+                                \\cp -rf ../KLAlgorithmLib/configs city_manager &&
+                                \\cp -rf magic_center_cfg.xml city_manager &&
+                                pwd && ls -l &&
+                                echo "
+                                FROM 192.168.2.100:5000/osmagic/runtime:v1.0
+                                MAINTAINER STQF <470524151@qq.com>
+                                COPY city_manager /root/koala/osmagic
+                                CMD ["/bin/bash","/root/koala/osmagicmagic_center"]
+                                ENV TZ=Asia/Shanghai \\
+                                    NVIDIA_VISIBLE_DEVICES=0 \\
+                                    NVIDIA_DRIVER_CAPABILITIES=video,compute,utility
+                                USER root
+                                WORKDIR /root/koala/osmagic " > Dockerfile && cat Dockerfile &&
+                                docker build -t 192.168.2.100:5000/osmagic-all/micro-algo-statical/city-manger:v1.0.1 .
+                             """
                             println("[INFO ] Algorithm finish .... ")
                         }
                     }
