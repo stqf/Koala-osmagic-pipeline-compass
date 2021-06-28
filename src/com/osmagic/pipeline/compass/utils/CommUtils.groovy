@@ -1,7 +1,12 @@
 package com.osmagic.pipeline.compass.utils
 
-@Grab('org.apache.commons:commons-math3:3.4.1')
+@Grapes(value = [
+    @Grab('org.codehaus.groovy:groovy-xml:2.4.12'),
+    @Grab('org.apache.commons:commons-math3:3.4.1')
+])
 
+import groovy.xml.XmlParser
+import groovy.xml.XmlUtil
 import org.apache.commons.math3.stat.StatUtils;
 
 class CommUtils {
@@ -32,14 +37,14 @@ class CommUtils {
      * @return
      */
     static String xmlContent(String path, List<String> abs, List<String> apis) {
-        /*def file = new File(path)
+        def file = new File(path)
         XmlParser parser = new XmlParser()
         def docItem = parser.parse(file)
         NodeList children = docItem.children()
         for (def child : children) {
             def nameItem = child.attribute("Name")
 
-            *//*图片处理*//*
+            /*图片处理*/
             if ("ImageDetectionHttpHandle" == nameItem) {
                 NodeList apiItems = child.children()
                 List<Object> swap = new ArrayList<>()
@@ -52,7 +57,7 @@ class CommUtils {
                 apiItems.retainAll(swap)
             }
 
-            *//*视频处理*//*
+            /*视频处理*/
             if ("OsmagicApp" == nameItem) {
                 NodeList abItems = child.children()
                 List<Object> swap = new ArrayList<>()
@@ -66,12 +71,11 @@ class CommUtils {
                 abItems.retainAll(swap)
             }
         }
-        return XmlUtil.serialize(docItem)*/
+        return XmlUtil.serialize(docItem)
 
-        double[] values = [0.33, 1.33, 0.27333, 0.3, 0.501, 0.444, 0.44, 0.34496, 0.33, 0.3, 0.292, 0.667]
-        println("平均数：" + StatUtils.mean(values))
-
-        return null
+        //double[] values = [0.33, 1.33, 0.27333, 0.3, 0.501, 0.444, 0.44, 0.34496, 0.33, 0.3, 0.292, 0.667]
+        //println("平均数：" + StatUtils.mean(values))
+        //return null
     }
 
 

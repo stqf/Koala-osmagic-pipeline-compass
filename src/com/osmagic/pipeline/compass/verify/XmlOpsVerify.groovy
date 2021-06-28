@@ -2,9 +2,7 @@ package com.osmagic.pipeline.compass.verify
 
 import groovy.xml.XmlParser
 import groovy.xml.XmlUtil
-import org.apache.commons.math3.stat.StatUtils;
 
-@Grab('org.apache.commons:commons-math3:3.4.1')
 class XmlOpsVerify {
 
     static void main(String[] args) {
@@ -61,8 +59,6 @@ class XmlOpsVerify {
         }
         println(dynamicItem)
         */
-        double[] values = new double[]{0.33, 1.33, 0.27333, 0.3, 0.501, 0.444, 0.44, 0.34496, 0.33, 0.3, 0.292, 0.667};
-        System.out.println("平均数：" + StatUtils.mean(values))
     }
 
 }
