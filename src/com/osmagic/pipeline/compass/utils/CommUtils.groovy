@@ -7,7 +7,6 @@ package com.osmagic.pipeline.compass.utils
 
 import groovy.xml.XmlParser
 import groovy.xml.XmlUtil
-import com.alibaba.fastjson.JSONObject;
 
 class CommUtils {
 
