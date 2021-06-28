@@ -71,9 +71,6 @@ class CommUtils {
             }
         }
         return XmlUtil.serialize(docItem)
-
-        //def map =  ["name": "John"]
-        //return JSONObject.toJSONString(map)
     }
 
 
