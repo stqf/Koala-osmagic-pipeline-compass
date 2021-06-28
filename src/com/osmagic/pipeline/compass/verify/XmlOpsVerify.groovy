@@ -16,22 +16,37 @@ class XmlOpsVerify {
         for (def child : children) {
             def nameItem = child.attribute("Name")
 
-            if ("ImageDetectionHttpHandle" != nameItem) {
-                continue
-            }
-            NodeList apis = child.children()
-            List<Object> swap = new ArrayList<>()
-            for (def apiItem : apis) {
-                String prefixItem = apiItem.attribute("Prefix")
-                if (prefixItem.contains("road-damaged")){
-                    swap.add(apiItem)
+            if ("ImageDetectionHttpHandle" == nameItem) {
+                NodeList apis = child.children()
+                List<Object> swap = new ArrayList<>()
+                for (def apiItem : apis) {
+                    String prefixItem = apiItem.attribute("Prefix")
+                    if (prefixItem.contains("road-damaged")) {
+                        swap.add(apiItem)
+                    }
                 }
+                //swap.forEach { child.remove(it) }
+                apis.retainAll(swap)
             }
-            swap.forEach{child.remove(it)}
+
+            if ("OsmagicApp" == nameItem) {
+                NodeList abs = child.children()
+                List<Object> swap = new ArrayList<>()
+                for (def abItem : abs) {
+                    String tagNameItem = abItem.name()
+                    String abNameItem = abItem.attribute("Name")
+                    if ("AiAbility" != tagNameItem || abNameItem == "MotorVehicleParking") {
+                        swap.add(abItem)
+                    }
+                }
+                //swap.forEach { child.remove(it) }
+                abs.retainAll(swap)
+            }
         }
 
         println(XmlUtil.serialize(docItem))
 
+        /*
         def staticItem = docItem.findAll {
             String nameItem = it.attribute("Name")
             return "ImageDetectionHttpHandle".equals(nameItem)
@@ -43,6 +58,7 @@ class XmlOpsVerify {
             return "OsmagicApp".equals(nameItem)
         }
         println(dynamicItem)
+        */
 
 
     }

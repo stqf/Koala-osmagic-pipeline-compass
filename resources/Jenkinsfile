@@ -7,7 +7,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'Koala-osmaigc-all-barnch', choices: ['dev', 'test', 'master'], description: 'Koala-osmagic-all分支')
+        choice(name: 'Koala-osmaigc-all-barnch', choices: ['1.0.0.20210625-alpha','dev', 'test', 'master'], description: 'Koala-osmagic-all分支')
 
         string(name: 'ServerIp', defaultValue: '10.10.8.5', description: '服务器地址')
         password(name: 'ServerPs', defaultValue: '12345', description: ' 服务器root账号密码')
@@ -162,6 +162,10 @@ pipeline {
                             """
                             sh "git --version && pwd && ls -l && nvidia-smi && cd $wsItem && ls -l && docker images"
                             down.clone wsItem, "workspace", params.get("Koala-osmaigc-all-barnch"), "http://192.168.2.100:8888/osmagic-all/Cpp/city_manager/workspace.git"
+                            def abs = ["MotorVehicleParking"]
+                            def apis = ["/statical/api/v1/obj-detect/road-damaged"]
+                            def pathItem = "${env.WORKSPACE}/$wsItem/workspace/magic_center_cfg.xml"
+                            def contentItem = CommUtils.xmlContent(pathItem, abs, apis)
                             sh """
                                 pwd && ls -l && cd $wsItem && ls -l
                                 cd workspace && 
@@ -169,11 +173,9 @@ pipeline {
                                 cat download.sh.1 &&
                                 sh download.sh.1 &&
                                 pwd && ls -l &&
-                                cd ../AlgoLib && mkdir -pv build && cd build && cmake .. && make -j8 && make install &&
-                                cd ../../workspace &&
-                                bash build_frame.sh &&
-                                bash build_static.sh &&
-                                bash build_stream.sh &&
+                                bash build_all.sh &&
+                                echo "$contentItem" > magic_center_cfg.xml &&
+                                cat magic_center_cfg.xml &&
                                 \\cp -rf ../KLAlgorithmLib/configs city_manager &&
                                 \\cp -rf magic_center_cfg.xml city_manager &&
                                 ls -l city_manager && pwd && ls -l &&
