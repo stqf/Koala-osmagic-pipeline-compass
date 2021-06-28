@@ -1,8 +1,6 @@
 package com.osmagic.pipeline.compass.utils
 
-import groovy.xml.XmlParser
-import groovy.xml.XmlUtil
-
+@Grab('org.apache.commons:commons-math3:3.4.1')
 class CommUtils {
 
     /**
@@ -31,14 +29,14 @@ class CommUtils {
      * @return
      */
     static String xmlContent(String path, List<String> abs, List<String> apis) {
-        def file = new File(path)
+        /*def file = new File(path)
         XmlParser parser = new XmlParser()
         def docItem = parser.parse(file)
         NodeList children = docItem.children()
         for (def child : children) {
             def nameItem = child.attribute("Name")
 
-            /*图片处理*/
+            *//*图片处理*//*
             if ("ImageDetectionHttpHandle" == nameItem) {
                 NodeList apiItems = child.children()
                 List<Object> swap = new ArrayList<>()
@@ -51,7 +49,7 @@ class CommUtils {
                 apiItems.retainAll(swap)
             }
 
-            /*视频处理*/
+            *//*视频处理*//*
             if ("OsmagicApp" == nameItem) {
                 NodeList abItems = child.children()
                 List<Object> swap = new ArrayList<>()
@@ -65,7 +63,9 @@ class CommUtils {
                 abItems.retainAll(swap)
             }
         }
-        return XmlUtil.serialize(docItem)
+        return XmlUtil.serialize(docItem)*/
+
+        return null
     }
 
 
