@@ -176,7 +176,7 @@ pipeline {
                                 bash build_stream.sh &&
                                 \\cp -rf ../KLAlgorithmLib/configs city_manager &&
                                 \\cp -rf magic_center_cfg.xml city_manager &&
-                                pwd && ls -l &&
+                                ls -l city_manager && pwd && ls -l &&
                                 echo "
                                 FROM 192.168.2.100:5000/osmagic/runtime:v1.0
                                 MAINTAINER STQF <470524151@qq.com>
