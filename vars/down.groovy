@@ -21,7 +21,7 @@ def clone(String wsItem, String projectItem, String branch, String url) {
         fi
     """
 
-    if (isBranch(branchItem, projectItem)) {
+    if (isBranch(branchItem, projectItem, wsItem)) {
         sh "cd $wsItem && cd $projectItem && git pull"
     }
 
@@ -34,7 +34,7 @@ def clone(String wsItem, String projectItem, String branch, String url) {
  * @param project 项目目录
  * @return
  */
-def isBranch(String branch, String project) {
+def isBranch(String branch, String project, String wsItem) {
     String[] branchItems = sh(script: """cd $wsItem && cd $project && git branch""", returnStdout: true).trim().split("\n")
     return Arrays.asList(branchItems).contains(branch)
 }
