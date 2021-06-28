@@ -1,11 +1,13 @@
 package com.osmagic.pipeline.compass.utils
 
 @Grapes(value = [
-    @Grab('org.codehaus.groovy:groovy-xml:2.4.12')
+    @Grab('org.codehaus.groovy:groovy-xml:2.4.12'),
+    @Grab('com.alibaba:fastjson:1.2.75')
 ])
 
-import groovy.xml.XmlParser
-import groovy.xml.XmlUtil
+//import groovy.xml.XmlParser
+//import groovy.xml.XmlUtil
+import com.alibaba.fastjson.JSONObject;
 
 class CommUtils {
 
@@ -35,14 +37,14 @@ class CommUtils {
      * @return
      */
     static String xmlContent(String path, List<String> abs, List<String> apis) {
-        def file = new File(path)
+        /*def file = new File(path)
         XmlParser parser = new XmlParser()
         def docItem = parser.parse(file)
         NodeList children = docItem.children()
         for (def child : children) {
             def nameItem = child.attribute("Name")
 
-            /*图片处理*/
+            *//*图片处理*//*
             if ("ImageDetectionHttpHandle" == nameItem) {
                 NodeList apiItems = child.children()
                 List<Object> swap = new ArrayList<>()
@@ -55,7 +57,7 @@ class CommUtils {
                 apiItems.retainAll(swap)
             }
 
-            /*视频处理*/
+            *//*视频处理*//*
             if ("OsmagicApp" == nameItem) {
                 NodeList abItems = child.children()
                 List<Object> swap = new ArrayList<>()
@@ -69,7 +71,10 @@ class CommUtils {
                 abItems.retainAll(swap)
             }
         }
-        return XmlUtil.serialize(docItem)
+        return XmlUtil.serialize(docItem)*/
+
+        def map =  ["name": "John"]
+        return JSONObject.toJSONString(map)
     }
 
 
