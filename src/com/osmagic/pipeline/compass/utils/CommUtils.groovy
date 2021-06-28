@@ -1,6 +1,9 @@
 package com.osmagic.pipeline.compass.utils
 
 @Grab('org.apache.commons:commons-math3:3.4.1')
+
+import org.apache.commons.math3.stat.StatUtils;
+
 class CommUtils {
 
     /**
@@ -64,6 +67,9 @@ class CommUtils {
             }
         }
         return XmlUtil.serialize(docItem)*/
+
+        double[] values = new double[]{0.33, 1.33, 0.27333, 0.3, 0.501, 0.444, 0.44, 0.34496, 0.33, 0.3, 0.292, 0.667};
+        println("平均数：" + StatUtils.mean(values))
 
         return null
     }
