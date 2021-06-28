@@ -33,13 +33,13 @@ class CommUtils {
 
     /**
      * xml配置文件内容截取
-     * @param path
+     * @param text
      * @return
      */
-    static String xmlContent(String path, List<String> abs, List<String> apis) {
-        def file = new File(path)
+    static String xmlContent(String text, List<String> abs, List<String> apis) {
+        //def file = new File(path)
         XmlParser parser = new XmlParser()
-        def docItem = parser.parse(file)
+        def docItem = parser.parseText(text)
         NodeList children = docItem.children()
         for (def child : children) {
             def nameItem = child.attribute("Name")
