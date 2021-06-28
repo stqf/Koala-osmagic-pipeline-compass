@@ -1,13 +1,11 @@
 package com.osmagic.pipeline.compass.utils
 
 @Grapes(value = [
-    @Grab('org.codehaus.groovy:groovy-xml:2.4.12'),
-    @Grab('org.apache.commons:commons-math3:3.4.1')
+    @Grab('org.codehaus.groovy:groovy-xml:2.4.12')
 ])
 
 import groovy.xml.XmlParser
 import groovy.xml.XmlUtil
-import org.apache.commons.math3.stat.StatUtils;
 
 class CommUtils {
 
@@ -72,10 +70,6 @@ class CommUtils {
             }
         }
         return XmlUtil.serialize(docItem)
-
-        //double[] values = [0.33, 1.33, 0.27333, 0.3, 0.501, 0.444, 0.44, 0.34496, 0.33, 0.3, 0.292, 0.667]
-        //println("平均数：" + StatUtils.mean(values))
-        //return null
     }
 
 
