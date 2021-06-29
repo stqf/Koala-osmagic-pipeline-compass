@@ -154,30 +154,62 @@ pipeline {
                     }
                     steps {
                         script {
+                            def nameIt = "workspace"
                             def wsItem = "Koala-osmagic-algo"
+                            def branch = params.get("Koala-osmaigc-all-barnch")
+                            def destWsItem = "${env.WORKSPACE}/$wsItem/workspace/city_manager"
+                            def nameItems = []
+
+                            sh "mkdir -pv $wsItem && pwd && ls -l && nvidia-smi && cd $wsItem && ls -l"
+                            down.clone wsItem, nameIt, branch, "http://192.168.2.100:8888/osmagic-all/Cpp/city_manager/workspace.git"
+                            down.clone wsItem, "EncryptedModels", "master", "http://192.168.2.100:8888/AIEngine/EncryptedModels.git"
+
+                            def xmlPathItem = "${env.WORKSPACE}/$wsItem/workspace/magic_center_cfg.xml"
+                            def jsonPathItem = "${env.WORKSPACE}/$wsItem/workspace/ability_model_map.txt"
+                            def xmlText = readFile(xmlPathItem)
+                            def jsonText = readFile(jsonPathItem)
+
+                            def map = CommUtils.prepare(jsonText, nameItems)
+
+                            def abs = map.get("abs")
+                            def apis = map.get("apis")
+                            def names = map.get("names")
+                            def models = map.get("models")
+
+                            echo "[DEBUG] support items is $names"
+
+                            /*处理magic_center_cfg.xml*/
+                            def contentItem = CommUtils.xmlContent(xmlText, abs, apis)
+                            writeFile file: xmlPathItem, text: contentItem, encoding: "UTF-8"
+
+                            /*处理configs下JSON文件*/
+                            sh "mkdir -pv $destWsItem/configs"
+                            def fileItems = new HashSet()
+                            for (i in 0..<models.size()) {
+                                def modelIt = models.get(i)
+                                def srcItem = "${env.WORKSPACE}/$wsItem/KLAlgorithmLib/$modelIt"
+                                def cfgItText = readFile(xmlPathItem)
+                                def fileItem = CommUtils.modelFileName(cfgItText)
+
+                                fileItems.add(fileItem)
+
+                                sh "cp -rf $srcItem $destWsItem/configs"
+                            }
+
+                            /*处理模型文件*/
+                            for (i in 0..<fileItems.size()) {
+                                def fileIt = fileItems.get(i)
+                                def srcItem = "${env.WORKSPACE}/$wsItem/EncryptedModels/$fileIt"
+                                sh "cp -rf $srcItem $destWsItem/models"
+                            }
+
                             sh """
-                                if [ ! -d "$wsItem" ]; then
-                                    mkdir $wsItem
-                                fi
-                            """
-                            sh "pwd && ls -l && nvidia-smi && cd $wsItem && ls -l"
-                            down.clone wsItem, "workspace", params.get("Koala-osmaigc-all-barnch"), "http://192.168.2.100:8888/osmagic-all/Cpp/city_manager/workspace.git"
-                            def abs = ["MotorVehicleParking"]
-                            def apis = ["/statical/api/v1/obj-detect/road-damaged"]
-                            def pathItem = "${env.WORKSPACE}/$wsItem/workspace/magic_center_cfg.xml"
-                            def content = readFile(pathItem)
-                            def contentItem = CommUtils.xmlContent(content, abs, apis)
-                            writeFile file: pathItem, text: contentItem, encoding: "UTF-8"
-                            sh """
-                                pwd && ls -l && cd $wsItem && ls -l
-                                cd workspace && 
+                                pwd && ls -l && cd $wsItem && ls -l && ls -l $destWsItem && cd workspace && 
                                 sed -e "s/http:\\/\\//http:\\/\\/${env.Sauce_Access}@/g" download.sh > download.sh.1 && 
-                                cat download.sh.1 &&
-                                sh download.sh.1 &&
+                                cat download.sh.1 && sh download.sh.1 &&
                                 pwd && ls -l &&
                                 bash build_all.sh &&
                                 cat magic_center_cfg.xml &&
-                                \\cp -rf ../KLAlgorithmLib/configs city_manager &&
                                 \\cp -rf magic_center_cfg.xml city_manager &&
                                 ls -l city_manager && pwd && ls -l &&
                                 echo "

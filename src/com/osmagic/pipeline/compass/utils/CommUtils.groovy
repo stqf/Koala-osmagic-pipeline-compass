@@ -1,10 +1,12 @@
 package com.osmagic.pipeline.compass.utils
 
+import com.alibaba.fastjson.JSONArray
 @Grapes(value = [
-    @Grab('org.codehaus.groovy:groovy-xml:3.0.8'),
-    @Grab('com.alibaba:fastjson:1.2.75')
+        @Grab('org.codehaus.groovy:groovy-xml:3.0.8'),
+        @Grab('com.alibaba:fastjson:1.2.75')
 ])
 
+import com.alibaba.fastjson.JSONObject
 import groovy.xml.XmlParser
 import groovy.xml.XmlUtil
 
@@ -28,6 +30,65 @@ class CommUtils {
     static boolean algorithm(String... items) {
         println("[TRACE] algorithm $items")
         return Arrays.asList(items).contains("Algo")
+    }
+
+    /**
+     * 处理JSON映射文件
+     * @param text
+     * @param names
+     * @return
+     */
+    static Map<String, List<String>> prepare(String text, List<String> names) {
+        Map<String, List<String>> reItem = new LinkedHashMap<>()
+
+        List<String> abItems = new ArrayList<>()
+        List<String> apiItems = new ArrayList<>()
+        List<String> nameItems = new ArrayList<>()
+        Set<String> modelItems = new HashSet<>()
+
+        JSONArray items = JSONObject.parseArray(text);
+        for (i in 0..<items.size()) {
+            JSONObject objItem = items.getJSONObject(i)
+
+            String nameIt = objItem.getString("name")
+            if (!names.contains(nameIt)) {
+                nameItems.add(nameIt)
+                continue
+            }
+
+            String abIt = objItem.getString("ab")
+            if (Objects.nonNull(abIt) && !abIt.trim().isEmpty()) {
+                abItems.add(abIt)
+            }
+
+            String apiIt = objItem.getString("api")
+            if (Objects.nonNull(apiIt) && !apiIt.trim().isEmpty()) {
+                apiItems.add(apiIt)
+            }
+
+            JSONArray modelIt = objItem.getJSONArray("models")
+            if (Objects.nonNull(modelIt) && !modelIt.isEmpty()) {
+                def modelItPro = modelIt.toJavaList(String.class)
+                modelItems.addAll(modelItPro)
+            }
+        }
+
+        reItem.put("names", nameItems)
+        reItem.put("abs", abItems)
+        reItem.put("apis", apiItems)
+        reItem.put("models", new ArrayList<String>(modelItems))
+
+        return reItem
+    }
+
+    static String modelFileName(String text) {
+        def objItem = JSONObject.parseObject(text)
+
+        JSONObject algoItem = objItem.getJSONObject("algo")
+
+        def mpItem = algoItem.getString("model_path")
+
+        return mpItem
     }
 
     /**
